@@ -1,0 +1,41 @@
+name: Build and Deploy to Kind
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+      - name: Build Docker image
+        run: |
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:latest ./sample-app
+
+      - name: Push image to GHCR
+        run: |
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:latest
+
+  deploy-to-kind:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Kind cluster
+        uses: helm/kind-action@v1.8.0
+
+      - name: Load image into Kind
+        run: |
+          kind load docker-image ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:latest
+
+      - name: Apply K8s manifests
+        run: |
+          kubectl apply -f sample-app/k8s/
