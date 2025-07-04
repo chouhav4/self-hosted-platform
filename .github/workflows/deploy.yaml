@@ -32,6 +32,14 @@ jobs:
       - name: Set up Kind cluster
         uses: helm/kind-action@v1.8.0
 
+      - name: Create imagePullSecret in cluster
+        run: |
+          kubectl create secret docker-registry ghcr-secret \
+            --docker-server=ghcr.io \
+            --docker-username=${{ secrets.GHCR_USERNAME }} \
+            --docker-password=${{ secrets.GHCR_PAT }} \
+            --docker-email=not-needed@example.com
+
       - name: Load image into Kind
         run: |
           kind load docker-image ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:v1
