@@ -29,6 +29,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Kind cluster
         uses: helm/kind-action@v1.8.0
 
@@ -39,10 +42,6 @@ jobs:
             --docker-username=${{ secrets.GHCR_USERNAME }} \
             --docker-password=${{ secrets.GHCR_PAT }} \
             --docker-email=not-needed@example.com
-
-      - name: Load image into Kind
-        run: |
-          kind load docker-image ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:v1
 
       - name: Apply K8s manifests
         run: |
