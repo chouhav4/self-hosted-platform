@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: platform-app-service
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: platform-app
   ports:
     - port: 80
       targetPort: 3000
+      nodePort: 30080  # Optional: Pick a free port between 30000–32767

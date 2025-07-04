@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: platform-app
-          image: platform-app:latest
+          image: platform-app:v1
           ports:
             - containerPort: 3000
           readinessProbe:

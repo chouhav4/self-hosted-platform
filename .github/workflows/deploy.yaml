@@ -18,11 +18,11 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:latest ./sample-app
+          docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:v1 ./sample-app
 
       - name: Push image to GHCR
         run: |
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:v1
 
   deploy-to-kind:
     needs: build-and-push
@@ -34,7 +34,7 @@ jobs:
 
       - name: Load image into Kind
         run: |
-          kind load docker-image ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:latest
+          kind load docker-image ghcr.io/${{ secrets.GHCR_USERNAME }}/platform-app:v1
 
       - name: Apply K8s manifests
         run: |
